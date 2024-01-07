@@ -48,7 +48,7 @@ class EmployeViewModelTest {
     @Test
     fun `when response is not emptyList getEmployes should val result return state list of employeModel`() {
         viewModel = EmployeViewModel(getEmploye, deleteEmploye)
-        runTest {
+        runBlocking {
             coEvery { getEmploye() } returns listOf(EmployeMotherObject.anyResponse.toDomain())
             viewModel.getEmployes()
         }
@@ -65,8 +65,10 @@ class EmployeViewModelTest {
     @Test
     fun `when response is emptyList getEmployes should val result return state of emptyList`() {
         viewModel = EmployeViewModel(getEmploye, deleteEmploye)
-        coEvery { getEmploye() } returns null
-        viewModel.getEmployes()
+        runBlocking {
+            coEvery { getEmploye() } returns null
+            viewModel.getEmployes()
+        }
         runBlocking {
             coVerify { getEmploye() }
             assertTrue(viewModel.stateList.value.isEmpty())
@@ -77,8 +79,10 @@ class EmployeViewModelTest {
     fun `when response is corret deleteEmployeId should return state true`() {
         viewModel = EmployeViewModel(getEmploye, deleteEmploye)
         val id = "1"
-        coEvery { deleteEmploye(id) } returns "Delete Correct"
-        viewModel.deleteEmployeId(id)
+        runTest {
+            coEvery { deleteEmploye(id) } returns "Delete Correct"
+            viewModel.deleteEmployeId(id)
+        }
         runBlocking {
             coVerify { deleteEmploye(id) }
             assertEquals(
